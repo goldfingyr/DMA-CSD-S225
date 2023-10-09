@@ -18,29 +18,54 @@ namespace CarAPI.Controllers
     [ApiController]
     public class CarsController : ControllerBase
     {
-        private string createTable = "CREATE TABLE \"Cars\" (\"Licensplate\" NCHAR(16) NOT NULL DEFAULT '''NULL''',\"Make\" NCHAR(128) NULL DEFAULT '''NULL''' ,\"Model\" NCHAR(128) NULL DEFAULT '''NULL''' ,\"Color\" NCHAR(128) NULL DEFAULT '''NULL''' ,PRIMARY KEY (\"Licensplate\"));";
-        // GET: api/<CarsController>
+        private string createTable = "CREATE TABLE Cars (Licensplate VARCHAR(16),Make VARCHAR(128),Model VARCHAR(128),Color VARCHAR(128),PRIMARY KEY (Licensplate))";
+        // GET: api/Car
+        /// <summary>
+        /// Gets all cars in the table. Optional search arguments "make" and "color"
+        /// </summary>
+        /// <param name="make"> Optional search argument</param>
+        /// <param name="color"> Optional search argument</param>
+        /// <returns> List of Car</returns>
+        //
+        // Name of method is irrelevant. It is the routing that matters: [HttpGet]
         [HttpGet]
-        public IActionResult Get()
+        public IActionResult Get(string? make="%", string? color="%")
         {
             using (var connection = new SqlConnection(System.Environment.GetEnvironmentVariable("ConnectionString")))
             {
                 connection.Open();
                 try
                 {
-                    return Ok(connection.Query<Car>("SELECT * FROM dbo.Cars").ToList());
+                    return Ok(connection.Query<Car>("SELECT * FROM dbo.Cars WHERE Make LIKE @make AND Color LIKE @color", new
+                    {
+                        make = make,
+                        color = color
+                    }).ToList());
                 }
                 catch
                 {
                     connection.Execute(createTable);
                 }
-                return Ok(connection.Query<Car>("SELECT * FROM dbo.Cars").ToList());
+                // This Query could be very simple as its function is to return an empty array.
+                // The table just created most likely is .... empty
+                return Ok(connection.Query<Car>("SELECT * FROM dbo.Cars WHERE Make LIKE @make AND Color LIKE @color", new
+                {
+                    make = make,
+                    color = color
+                }).ToList());
             }
         }
 
-        // GET api/<CarsController>/cm57812
+        // GET api/Cars/cm57812
+        /// <summary>
+        /// Get a car identified by its licensplate
+        /// </summary>
+        /// <param name="Licensplate"></param>
+        /// <returns>Car</returns>
+        //
+        // Name of method is irrelevant. It is the routing that matters: [HttpGet("{Licensplate}")]
         [HttpGet("{Licensplate}")]
-        public IActionResult Get(string Licensplate)
+        public IActionResult GetByLicenceplate(string Licensplate)
         {
             using (var connection = new SqlConnection(System.Environment.GetEnvironmentVariable("ConnectionString")))
             {
