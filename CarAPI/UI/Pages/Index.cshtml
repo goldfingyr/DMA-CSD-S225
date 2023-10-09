@@ -1,0 +1,21 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+
+<div class="row">
+    <div class="col">
+        @if (Model.CarSelected != null)
+        {
+            <h3>Selected car</h3>
+            <p>@Model.CarSelected</p>
+        }
+        <h3>Find car</h3>
+        <form method="post">
+            <input type="text" name="target" />
+            <input type="hidden" name="action" value="findCar" />
+            <input type="submit" value="Submit"/>
+        </form>
+    </div>
+</div>
