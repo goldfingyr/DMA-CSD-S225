@@ -1,0 +1,59 @@
+version: '3'
+
+services:
+
+  # mariadb:
+    # image: mariadb
+    # container_name: mariadb
+    # restart: always
+    # networks:
+      # - demo
+    # ports:
+      # - 3306:3306
+    # volumes:
+      # - "/root/DockerWorld/maria:/var/lib/mysql"
+    # environment:
+      # # @see https://phabricator.wikimedia.org/source/mediawiki/browse/master/includes/DefaultSettings.php
+      # MYSQL_DATABASE: keycloak
+      # MYSQL_USER: keycloak
+      # MYSQL_PASSWORD: "12tf56so"
+      # MYSQL_ROOT_PASSWORD: "12tf56so"
+
+  msdb:
+    container_name: msdb
+    #image: mcr.microsoft.com/mssql/server:2019-GDR1-ubuntu-16.04
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    restart: always
+    networks:
+      - demo
+    ports:
+      - "1433:1433"
+      - "135:135"
+      - "51000:51000"
+    environment:
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: "@12tf56so"
+      MSSQL_RPC_PORT: "135"
+      MSSQL_DTC_TCP_PORT: "51000"
+
+  # keycloak:
+    # image: quay.io/keycloak/keycloak:legacy
+    # container_name: keycloak
+    # restart: always
+    # networks:
+      # - demo
+    # ports:
+      # - 127.0.0.1:8080:8080
+    # environment:
+      # KEYCLOAK_ADMIN: admin
+      # KEYCLOAK_ADMIN_PASSWORD: 12tf56so
+      # DB_VENDOR: MYSQL
+      # DB_ADDR: mariadb
+      # DB_DATABASE: keycloak
+      # DB_USER: keycloak
+      # DB_SCHEMA: public
+      # DB_PASSWORD: 12tf56so
+      # PROXY_ADDRESS_FORWARDING: "true"
+
+networks:
+  demo:

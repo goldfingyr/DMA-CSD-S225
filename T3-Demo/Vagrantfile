@@ -1,0 +1,32 @@
+Vagrant.configure("2") do |config|
+	config.vm.define "lm2" do |lm2|
+		lm2.vm.box = "Goldfingyr/UbuntuServer"
+		lm2.vm.network "private_network", ip: "192.168.11.2"
+		lm2.vm.provider "virtualbox" do |v|
+		  v.memory = 2048
+		  v.cpus = 1
+		  v.name = "T3-L2"
+		end
+		lm2.vm.synced_folder "log/docker-compose/", "/root/log/docker-compose", create: true
+		lm2.vm.provision "shell", path: "VagrantScripts/01_Initalizing.sh"
+		lm2.vm.provision "shell", path: "VagrantScripts/10_Certificates.sh", args: "secure.l2.ucnit.eu keycloak.l2.ucnit.eu"
+		#lm2.vm.provision "shell", path: "VagrantScripts/10_InstallDocker.sh"
+		lm2.vm.provision "shell", path: "VagrantScripts/10_InstallApache.sh"
+		lm2.vm.provision "shell", path: "VagrantScripts/20_ApacheWebsites.sh", args: "www-l2"
+	end
+	# config.vm.define "lm3" do |lm3|
+		# lm3.vm.box = "Goldfingyr/UbuntuServer"
+		# lm3.vm.network "private_network", ip: "192.168.11.3"
+		# lm3.vm.provider "virtualbox" do |v|
+		  # v.memory = 2048
+		  # v.cpus = 1
+		  # v.name = "T3-L3"
+		# end
+		# lm3.vm.synced_folder "log/docker-compose/", "/root/log/docker-compose", create: true
+		# lm3.vm.provision "shell", path: "VagrantScripts/01_Initalizing.sh"
+		# lm3.vm.provision "shell", path: "VagrantScripts/10_Certificates.sh", args: "secure.l3.ucnit.eu"
+		# #lm3.vm.provision "shell", path: "VagrantScripts/10_InstallDocker.sh"
+		# lm3.vm.provision "shell", path: "VagrantScripts/10_InstallApache.sh"
+		# lm3.vm.provision "shell", path: "VagrantScripts/20_ApacheWebsites.sh", args: "www-l3"
+	# end
+end
