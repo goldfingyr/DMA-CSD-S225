@@ -1,6 +1,7 @@
 ﻿using CarAPI.Models;
 using Dapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System.Data.SqlClient;
 using System.Net;
 
@@ -84,8 +85,28 @@ namespace CarAPI.Controllers
 
         // POST api/<CarsController>
         [HttpPost]
-        public void Post([FromBody] string value)
+        public IActionResult Post(string iLicensplate, string iMake, string iModel, string iColor)
         {
+            Car car = new()
+            {
+                Licensplate = iLicensplate,
+                Make = iMake,
+                Model = iModel,
+                Color = iColor
+            };
+            using (var connection = new SqlConnection(System.Environment.GetEnvironmentVariable("ConnectionString")))
+            {
+                connection.Open();
+                try
+                {
+                    return Ok(connection.ExecuteScalar<Car>("INSERT INTO dbo.Cars (Licensplate,Make,Model,Color) VALUES (@Licensplate, @Make, @Model, @Color)", car));
+                }
+                catch
+                {
+                    connection.Execute(createTable);
+                }
+                return null;
+            }
         }
 
         // PUT api/<CarsController>/5

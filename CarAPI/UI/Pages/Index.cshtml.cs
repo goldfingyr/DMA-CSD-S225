@@ -1,4 +1,5 @@
 ﻿using CarAPI.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Newtonsoft.Json;
@@ -73,6 +74,11 @@ namespace UI.Pages
                     break;
             }
             return null;
+        }
+
+        public IActionResult OnPostAjax1(string data)
+        {
+            return new JsonResult(new { result = DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss tt") });
         }
     }
 }
